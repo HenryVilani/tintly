@@ -44,6 +44,7 @@ console.log(Color.toString(hsl!));
 
 ```ts
 Color.parse("rgb(255, 0, 128)");
+Color.parse("rgba(255, 0, 128, 1)");
 Color.parse("#ff0080");
 Color.parse("#f08");
 Color.parse("hsl(200, 80%, 50%)");
@@ -70,9 +71,14 @@ Returns the parsed color object or `null` if the string is unrecognized.
 const hex = Color.parse("#3498db")!;
 
 // To RGB
-const rgb = Color.convert(hex, "RGBA");
+const rgb = Color.convert(hex, "RGB");
 console.log(Color.toString(rgb!));
 // → "rgb(52 152 219)"
+
+// To RGBA
+const rgba = Color.convert(hex, "RGBA");
+console.log(Color.toString(rgba!));
+// → "rgba(52 152 219, 1)"
 
 // To HSL
 const hsl = Color.convert(hex, "HSL");
@@ -128,7 +134,7 @@ console.log(Color.toString(oklab));
 
 ```ts
 console.log(Color.types());
-// → ["RGBA", "HEX", "LAB", "HSL", "LCH", "OKLAB", "OKLCH", "HWB", "CMYK", "CMY", "YIQ"]
+// → ["RGB", "RGBA", "HEX", "LAB", "HSL", "LCH", "OKLAB", "OKLCH", "HWB", "CMYK", "CMY", "YIQ"]
 
 console.log(Color.has("OKLCH")); // → true
 console.log(Color.has("XYZ"));   // → false
@@ -210,19 +216,20 @@ Returns an array of all registered type identifiers.
 
 ## Supported Color Spaces
 
-| Type    | Example string                          |
-|---------|-----------------------------------------|
-| `RGBA`  | `rgb(255, 128, 0)`                      |
-| `HEX`   | `#ff8000`, `#f80`, `#ff8000ff`          |
-| `HSL`   | `hsl(30, 100%, 50%)`, `hsla(...)`       |
-| `HWB`   | `hwb(30, 0%, 0%)`                       |
-| `LAB`   | `lab(70, 20, -10)`                      |
-| `LCH`   | `lch(70, 22, 333)`                      |
-| `OKLAB` | `oklab(0.7, 0.1, -0.05)`               |
-| `OKLCH` | `oklch(0.7, 0.12, 330)`                |
-| `CMYK`  | `cmyk(0%, 50%, 100%, 0%)`              |
-| `CMY`   | `cmy(0%, 50%, 80%)`                     |
-| `YIQ`   | `yiq(0.5, 0.2, -0.1)`                  |
+| Type    | Example string                          
+|---------|----------------------------------
+| `RGBA`  | `rgba(255, 128, 0, 1)`			
+| `RGB`  | `rgb(255, 128, 0)`			
+| `HEX`   | `#ff8000`, `#f80`, `#ff8000ff`			
+| `HSL`   | `hsl(30, 100%, 50%)`, `hsla(...)`			
+| `HWB`   | `hwb(30, 0%, 0%)`			
+| `LAB`   | `lab(70, 20, -10)`			
+| `LCH`   | `lch(70, 22, 333)`			
+| `OKLAB` | `oklab(0.7, 0.1, -0.05)`			
+| `OKLCH` | `oklch(0.7, 0.12, 330)`			
+| `CMYK`  | `cmyk(0%, 50%, 100%, 0%)`			
+| `CMY`   | `cmy(0%, 50%, 80%)`			
+| `YIQ`   | `yiq(0.5, 0.2, -0.1)`			
 
 ---
 
