@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 export interface OKLCH extends BaseColor {
 	type: "OKLCH";
@@ -8,7 +8,7 @@ export interface OKLCH extends BaseColor {
 	l: number;
 	c: number;
 	h: number;
-	a: number;
+	alpha: number;
 }
 
 const cbrt = Math.cbrt;
@@ -29,7 +29,7 @@ export const OKLCHSupport: ColorModel<OKLCH> = {
 			l: Number(m[1]),
 			c: Number(m[2]),
 			h: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -55,7 +55,7 @@ export const OKLCHSupport: ColorModel<OKLCH> = {
 
 		const z = -0.0763812845 * l3 - 0.4214819784 * m3 + 1.5861632204 * s3;
 
-		return { x, y, z, a: color.a };
+		return { x, y, z, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -89,7 +89,7 @@ export const OKLCHSupport: ColorModel<OKLCH> = {
 			l: L,
 			c: C,
 			h: H,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -98,12 +98,12 @@ export const OKLCHSupport: ColorModel<OKLCH> = {
 		const c = Number(color.c.toFixed(6));
 		const h = Number(color.h.toFixed(4));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `oklch(${l} ${c} ${h})`;
 		}
 
-		return `oklch(${l} ${c} ${h} / ${color.a})`;
+		return `oklch(${l} ${c} ${h} / ${color.alpha})`;
 	},
 };
 
-Color.register(OKLCHSupport);
+Tintly.register(OKLCHSupport);

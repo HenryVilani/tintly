@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 export interface LCH extends BaseColor {
 	type: "LCH";
@@ -8,7 +8,7 @@ export interface LCH extends BaseColor {
 	l: number;
 	c: number;
 	h: number;
-	a: number;
+	alpha: number;
 }
 
 const Xn = 0.95047;
@@ -38,7 +38,7 @@ export const LCHSupport: ColorModel<LCH> = {
 			l: Number(m[1]),
 			c: Number(m[2]),
 			h: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -60,7 +60,7 @@ export const LCHSupport: ColorModel<LCH> = {
 			x: xr * Xn,
 			y: yr * Yn,
 			z: zr * Zn,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -87,7 +87,7 @@ export const LCHSupport: ColorModel<LCH> = {
 			l: L,
 			c: C,
 			h: H,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -96,12 +96,12 @@ export const LCHSupport: ColorModel<LCH> = {
 		const c = Number(color.c.toFixed(4));
 		const h = Number(color.h.toFixed(4));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `lch(${l}% ${c} ${h})`;
 		}
 
-		return `lch(${l}% ${c} ${h} / ${color.a})`;
+		return `lch(${l}% ${c} ${h} / ${color.alpha})`;
 	},
 };
 
-Color.register(LCHSupport);
+Tintly.register(LCHSupport);

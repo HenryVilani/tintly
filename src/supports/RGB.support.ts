@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 export interface RGB extends BaseColor {
 	type: "RGB";
@@ -54,7 +54,7 @@ export const RGBSupport: ColorModel<RGB> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a: 1 };
+		return { x: x!, y: y!, z: z!, alpha: 1 };
 	},
 
 	fromCanonical(color) {
@@ -79,4 +79,4 @@ export const RGBSupport: ColorModel<RGB> = {
 	},
 };
 
-Color.register(RGBSupport);
+Tintly.register(RGBSupport);

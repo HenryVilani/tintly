@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 export interface LAB extends BaseColor {
 	type: "LAB";
@@ -55,7 +55,7 @@ export const LABSupport: ColorModel<LAB> = {
 			x: xr * Xn,
 			y: yr * Yn,
 			z: zr * Zn,
-			a: color.alpha,
+			alpha: color.alpha,
 		};
 	},
 
@@ -73,7 +73,7 @@ export const LABSupport: ColorModel<LAB> = {
 			l: 116 * fy - 16,
 			a: 500 * (fx - fy),
 			b: 200 * (fy - fz),
-			alpha: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -90,4 +90,4 @@ export const LABSupport: ColorModel<LAB> = {
 	},
 };
 
-Color.register(LABSupport);
+Tintly.register(LABSupport);

@@ -51,4 +51,4 @@ class ColorRegistry {
 
 }
 
-export const Color = new ColorRegistry();
+export const Tintly = new ColorRegistry();

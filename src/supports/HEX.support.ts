@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -26,7 +26,7 @@ const matMul = (m: number[][], v: number[]) =>
 export interface HEX extends BaseColor {
 	type: "HEX";
 	hex: string;
-	a: number;
+	alpha: number;
 }
 
 const hexToRgb = (hex: string) => {
@@ -49,7 +49,7 @@ const hexToRgb = (hex: string) => {
 		a = parseInt(hex.slice(6, 8), 16) / 255;
 	}
 
-	return { r, g, b, a };
+	return { r, g, b, alpha: a };
 };
 
 const rgbToHex = (r: number, g: number, b: number) =>
@@ -66,12 +66,12 @@ export const HEXSupport: ColorModel<HEX> = {
 		return {
 			type: "HEX",
 			hex: input,
-			a: hexToRgb(input).a,
+			alpha: hexToRgb(input).alpha,
 		};
 	},
 
 	toCanonical(color) {
-		const { r, g, b, a } = hexToRgb(color.hex);
+		const { r, g, b, alpha } = hexToRgb(color.hex);
 
 		const lr = linearize(r / 255);
 		const lg = linearize(g / 255);
@@ -79,7 +79,7 @@ export const HEXSupport: ColorModel<HEX> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a };
+		return { x: x!, y: y!, z: z!, alpha };
 	},
 
 	fromCanonical(color) {
@@ -94,16 +94,16 @@ export const HEXSupport: ColorModel<HEX> = {
 		return {
 			type: "HEX",
 			hex: rgbToHex(r, g, b),
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
 	toString(color) {
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return color.hex;
 		}
 
-		const alpha = Math.round(color.a * 255)
+		const alpha = Math.round(color.alpha * 255)
 			.toString(16)
 			.padStart(2, "0");
 
@@ -111,4 +111,4 @@ export const HEXSupport: ColorModel<HEX> = {
 	},
 };
 
-Color.register(HEXSupport);
+Tintly.register(HEXSupport);

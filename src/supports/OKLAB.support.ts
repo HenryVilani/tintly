@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 export interface OKLAB extends BaseColor {
 	type: "OKLAB";
@@ -84,7 +84,7 @@ export const OKLABSupport: ColorModel<OKLAB> = {
 
 		const z = -0.0763812845 * l3 - 0.4214819784 * m3 + 1.5861632204 * s3;
 
-		return { x, y, z, a: color.alpha };
+		return { x, y, z, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -113,7 +113,7 @@ export const OKLABSupport: ColorModel<OKLAB> = {
 			l: L,
 			a: A,
 			b: B,
-			alpha: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -122,7 +122,7 @@ export const OKLABSupport: ColorModel<OKLAB> = {
 		const a = Number(color.a.toFixed(6));
 		const b = Number(color.b.toFixed(6));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `oklab(${l} ${a} ${b})`;
 		}
 
@@ -130,4 +130,4 @@ export const OKLABSupport: ColorModel<OKLAB> = {
 	},
 };
 
-Color.register(OKLABSupport);
+Tintly.register(OKLABSupport);

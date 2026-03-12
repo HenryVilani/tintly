@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -31,7 +31,7 @@ export interface RGBA extends BaseColor {
 	r: number;
 	g: number;
 	b: number;
-	a: number;
+	alpha: number;
 }
 
 export const RGBASuppor: ColorModel<RGBA> = {
@@ -49,7 +49,7 @@ export const RGBASuppor: ColorModel<RGBA> = {
 			r: Number(m[1]),
 			g: Number(m[2]),
 			b: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -58,7 +58,7 @@ export const RGBASuppor: ColorModel<RGBA> = {
 		const lg = linearize(color.g / 255);
 		const lb = linearize(color.b / 255);
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
-		return { x: x!, y: y!, z: z!, a: color.a };
+		return { x: x!, y: y!, z: z!, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -69,7 +69,7 @@ export const RGBASuppor: ColorModel<RGBA> = {
 			r: Math.round(gammify(clamp(lr!)) * 255),
 			g: Math.round(gammify(clamp(lg!)) * 255),
 			b: Math.round(gammify(clamp(lb!)) * 255),
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -78,12 +78,12 @@ export const RGBASuppor: ColorModel<RGBA> = {
 		const g = Math.round(color.g);
 		const b = Math.round(color.b);
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `rgb(${r} ${g} ${b})`;
 		}
 
-		return `rgb(${r} ${g} ${b} / ${color.a})`;
+		return `rgb(${r} ${g} ${b} / ${color.alpha})`;
 	},
 };
 
-Color.register(RGBASuppor);
+Tintly.register(RGBASuppor);

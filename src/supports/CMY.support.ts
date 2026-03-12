@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -29,7 +29,7 @@ export interface CMY extends BaseColor {
 	c: number;
 	m: number;
 	y: number;
-	a: number;
+	alpha: number;
 }
 
 const cmyToRgb = (c: number, m: number, y: number) => {
@@ -63,7 +63,7 @@ export const CMYSupport: ColorModel<CMY> = {
 			c: Number(m[1]),
 			m: Number(m[2]),
 			y: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -76,7 +76,7 @@ export const CMYSupport: ColorModel<CMY> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a: color.a };
+		return { x: x!, y: y!, z: z!, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -95,7 +95,7 @@ export const CMYSupport: ColorModel<CMY> = {
 			c,
 			m,
 			y,
-			a: color.a,
+			alpha: color.alpha
 		};
 	},
 
@@ -104,12 +104,12 @@ export const CMYSupport: ColorModel<CMY> = {
 		const m = Number(color.m.toFixed(4));
 		const y = Number(color.y.toFixed(4));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `cmy(${c}% ${m}% ${y}%)`;
 		}
 
-		return `cmy(${c}% ${m}% ${y}% / ${color.a})`;
+		return `cmy(${c}% ${m}% ${y}% / ${color.alpha})`;
 	},
 };
 
-Color.register(CMYSupport);
+Tintly.register(CMYSupport);

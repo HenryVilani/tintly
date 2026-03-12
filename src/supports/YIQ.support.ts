@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -29,7 +29,7 @@ export interface YIQ extends BaseColor {
 	y: number;
 	i: number;
 	q: number;
-	a: number;
+	alpha: number;
 }
 
 const yiqToRgb = (y: number, i: number, q: number) => {
@@ -63,7 +63,7 @@ export const YIQSupport: ColorModel<YIQ> = {
 			y: Number(m[1]),
 			i: Number(m[2]),
 			q: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -76,7 +76,7 @@ export const YIQSupport: ColorModel<YIQ> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a: color.a };
+		return { x: x!, y: y!, z: z!, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -95,7 +95,7 @@ export const YIQSupport: ColorModel<YIQ> = {
 			y,
 			i,
 			q,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -104,12 +104,12 @@ export const YIQSupport: ColorModel<YIQ> = {
 		const i = Number(color.i.toFixed(6));
 		const q = Number(color.q.toFixed(6));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `yiq(${y} ${i} ${q})`;
 		}
 
-		return `yiq(${y} ${i} ${q} / ${color.a})`;
+		return `yiq(${y} ${i} ${q} / ${color.alpha})`;
 	},
 };
 
-Color.register(YIQSupport);
+Tintly.register(YIQSupport);

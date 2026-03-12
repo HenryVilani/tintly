@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -30,7 +30,7 @@ export interface CMYK extends BaseColor {
 	m: number;
 	y: number;
 	k: number;
-	a: number;
+	alpha: number;
 }
 
 const cmykToRgb = (c: number, m: number, y: number, k: number) => {
@@ -81,7 +81,7 @@ export const CMYKSupport: ColorModel<CMYK> = {
 			m: Number(m[2]),
 			y: Number(m[3]),
 			k: Number(m[4]),
-			a: m[5] !== undefined ? Number(m[5]) : 1,
+			alpha: m[5] !== undefined ? Number(m[5]) : 1,
 		};
 	},
 
@@ -94,7 +94,7 @@ export const CMYKSupport: ColorModel<CMYK> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a: color.a };
+		return { x: x!, y: y!, z: z!, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -114,7 +114,7 @@ export const CMYKSupport: ColorModel<CMYK> = {
 			m,
 			y,
 			k,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -124,12 +124,12 @@ export const CMYKSupport: ColorModel<CMYK> = {
 		const y = Number(color.y.toFixed(4));
 		const k = Number(color.k.toFixed(4));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `cmyk(${c}% ${m}% ${y}% ${k}%)`;
 		}
 
-		return `cmyk(${c}% ${m}% ${y}% ${k}% / ${color.a})`;
+		return `cmyk(${c}% ${m}% ${y}% ${k}% / ${color.alpha})`;
 	},
 };
 
-Color.register(CMYKSupport);
+Tintly.register(CMYKSupport);

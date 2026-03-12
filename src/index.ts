@@ -15,6 +15,7 @@ import "./supports/HWB.support.js";
 import "./supports/CMYK.support.js";
 import "./supports/CMY.support.js";
 import "./supports/YIQ.support.js";
+import "./supports/HSB.support.js";
 
 export * from "./core/Registry.js";
 

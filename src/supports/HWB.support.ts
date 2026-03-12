@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -29,7 +29,7 @@ export interface HWB extends BaseColor {
 	h: number;
 	w: number;
 	b: number;
-	a: number;
+	alpha: number;
 }
 
 const hueToRgb = (h: number) => {
@@ -120,7 +120,7 @@ export const HWBSupport: ColorModel<HWB> = {
 			h: Number(m[1]),
 			w: Number(m[2]),
 			b: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -133,7 +133,7 @@ export const HWBSupport: ColorModel<HWB> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a: color.a };
+		return { x: x!, y: y!, z: z!, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -152,7 +152,7 @@ export const HWBSupport: ColorModel<HWB> = {
 			h,
 			w,
 			b: bl,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -161,12 +161,12 @@ export const HWBSupport: ColorModel<HWB> = {
 		const w = Number(color.w.toFixed(4));
 		const b = Number(color.b.toFixed(4));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `hwb(${h} ${w}% ${b}%)`;
 		}
 
-		return `hwb(${h} ${w}% ${b}% / ${color.a})`;
+		return `hwb(${h} ${w}% ${b}% / ${color.alpha})`;
 	},
 };
 
-Color.register(HWBSupport);
+Tintly.register(HWBSupport);

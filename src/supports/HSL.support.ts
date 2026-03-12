@@ -1,6 +1,6 @@
 import type { BaseColor } from "../core/Color.js";
 import type { ColorModel } from "../core/ColorModel.js";
-import { Color } from "../core/Registry.js";
+import { Tintly } from "../core/Registry.js";
 
 const linearize = (v: number) =>
 	v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
@@ -30,7 +30,7 @@ export interface HSL extends BaseColor {
 	h: number;
 	s: number;
 	l: number;
-	a: number;
+	alpha: number;
 }
 
 const hslToRgb = (h: number, s: number, l: number) => {
@@ -106,7 +106,7 @@ export const HSLSupport: ColorModel<HSL> = {
 			h: Number(m[1]),
 			s: Number(m[2]),
 			l: Number(m[3]),
-			a: m[4] !== undefined ? Number(m[4]) : 1,
+			alpha: m[4] !== undefined ? Number(m[4]) : 1,
 		};
 	},
 
@@ -119,7 +119,7 @@ export const HSLSupport: ColorModel<HSL> = {
 
 		const [x, y, z] = matMul(toXYZMatrix, [lr, lg, lb]);
 
-		return { x: x!, y: y!, z: z!, a: color.a };
+		return { x: x!, y: y!, z: z!, alpha: color.alpha };
 	},
 
 	fromCanonical(color) {
@@ -138,7 +138,7 @@ export const HSLSupport: ColorModel<HSL> = {
 			h,
 			s,
 			l,
-			a: color.a,
+			alpha: color.alpha,
 		};
 	},
 
@@ -147,12 +147,12 @@ export const HSLSupport: ColorModel<HSL> = {
 		const s = Number(color.s.toFixed(4));
 		const l = Number(color.l.toFixed(4));
 
-		if (color.a === 1) {
+		if (color.alpha === 1) {
 			return `hsl(${h} ${s}% ${l}%)`;
 		}
 
-		return `hsl(${h} ${s}% ${l}% / ${color.a})`;
+		return `hsl(${h} ${s}% ${l}% / ${color.alpha})`;
 	},
 };
 
-Color.register(HSLSupport);
+Tintly.register(HSLSupport);
