@@ -1,0 +1,34 @@
+{
+	"name": "tintly",
+	"version": "1.0.0",
+	"description": "Comprehensive library of color models, with conversion and parsing capabilities.",
+	"license": "MIT",
+	"author": "Henry Vilani",
+	"repository": {
+		"url": "https://github.com/HenryVilani/tintly.git"
+	},
+	"type": "module",
+	"main": "./dist/index.js",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsup src/index.ts --format cjs,esm --dts --clean"
+	},
+	"keywords": [
+		"color"
+	],
+	"dependencies": {
+		"typescript": "^5.9.3"
+	},
+	"devDependencies": {
+		"tsup": "^8.5.1"
+	}
+}
