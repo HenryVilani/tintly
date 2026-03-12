@@ -1,4 +1,9 @@
+[![npm version](https://img.shields.io/npm/v/@henryvilani/tintly.svg?style=flat-square)](https://www.npmjs.com/package/@henryvilani/tintly)
+![NPM License](https://img.shields.io/npm/l/%40henryvilani%2Ftintly)
+
+
 # tintly
+
 
 A comprehensive, framework-agnostic color model library for JavaScript and TypeScript. Convert between 12 color spaces using CIE XYZ as a canonical intermediate format.
 
@@ -6,6 +11,7 @@ A comprehensive, framework-agnostic color model library for JavaScript and TypeS
 
 - 🎨 **12 color spaces** — RGB, RGBA, HEX, HSL, HWB, LAB, LCH, OKLAB, OKLCH, CMYK, CMY, YIQ
 - 🔄 **Convert between any two formats** via a single unified API
+- ⚡ **Zero dependencies** — lightweight and fast
 - 📦 **Dual format** — ships as both ESM and CommonJS
 - 🔒 **Fully typed** — first-class TypeScript support
 - 🧩 **Extensible** — register your own custom color models
