@@ -15,7 +15,7 @@ A comprehensive, framework-agnostic color model library for JavaScript and TypeS
 ## Installation
 
 ```bash
-npm install tintly
+npm install @henryvilani/tintly
 ```
 
 ---
@@ -23,7 +23,7 @@ npm install tintly
 ## Quick Start
 
 ```ts
-import { Color } from "tintly";
+import { Color } from "@henryvilani/tintly";
 
 // Parse any supported color string
 const color = Color.parse("rgb(255, 100, 50)");
@@ -141,9 +141,9 @@ console.log(Color.has("XYZ"));   // → false
 You can register your own color model by implementing the `ColorModel<T>` interface:
 
 ```ts
-import { Color } from "tintly";
-import type { BaseColor } from "tintly";
-import type { ColorModel } from "tintly";
+import { Color } from "@henryvilani/tintly";
+import type { BaseColor } from "@henryvilani/tintly";
+import type { ColorModel } from "@henryvilani/tintly";
 
 interface Grayscale extends BaseColor {
   type: "Grayscale";

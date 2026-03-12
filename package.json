@@ -1,5 +1,5 @@
 {
-	"name": "tintly",
+	"name": "@henryvilani/tintly",
 	"version": "1.0.0",
 	"description": "Comprehensive library of color models, with conversion and parsing capabilities.",
 	"license": "MIT",
