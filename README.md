@@ -5,11 +5,11 @@
 # tintly
 
 
-A comprehensive, framework-agnostic color model library for JavaScript and TypeScript. Convert between 12 color spaces using CIE XYZ as a canonical intermediate format.
+A comprehensive, framework-agnostic color model library for JavaScript and TypeScript. Convert between 27 color spaces using CIE XYZ as a canonical intermediate format.
 
 ## Features
 
-- 🎨 **13 color spaces** — RGB, RGBA, HEX, HSL, HSB, HWB, LAB, LCH, OKLAB, OKLCH, CMYK, CMY, YIQ
+- 🎨 **27 color spaces** — from sRGB to HDR, broadcast, perceptual, and scientific spaces
 - 🔄 **Convert between any two formats** via a single unified API
 - 🛠️ **Built-in operations** — mix, scale, lighten, darken, grayscale, invert, harmony, complement, and more
 - ♿ **Accessibility helpers** — WCAG 2.1 luminance, contrast ratio, and readable-on checks
@@ -51,21 +51,47 @@ console.log(Tintly.toString(hsl!));
 `Tintly.parse()` automatically detects the format:
 
 ```ts
+// sRGB
 Tintly.parse("rgb(255, 0, 128)");
 Tintly.parse("rgba(255, 0, 128, 1)");
 Tintly.parse("#ff0080");
 Tintly.parse("#f08");
-Tintly.parse("hsb(79, 100%, 50%)");
 Tintly.parse("hsl(200, 80%, 50%)");
 Tintly.parse("hsla(200, 80%, 50%, 0.5)");
+Tintly.parse("hsb(79, 100%, 50%)");
 Tintly.parse("hwb(200, 10%, 20%)");
+
+// CIE / perceptual
 Tintly.parse("lab(50, 20, -30)");
 Tintly.parse("lch(50, 35, 300)");
 Tintly.parse("oklab(0.6, 0.1, -0.1)");
 Tintly.parse("oklch(0.6, 0.15, 260)");
+Tintly.parse("luv(50, 20, -30)");
+Tintly.parse("lchuv(50, 35, 300)");
+Tintly.parse("hsluv(260, 80%, 50%)");
+Tintly.parse("okhsl(260, 80%, 50%)");
+Tintly.parse("okhsv(260, 80%, 50%)");
+
+// Wide-gamut RGB
+Tintly.parse("color(display-p3 0.5 0.3 0.8)");
+Tintly.parse("color(srgb-linear 0.5 0.3 0.8)");
+Tintly.parse("color(rec2020 0.5 0.3 0.8)");
+Tintly.parse("color(a98-rgb 0.5 0.3 0.8)");
+Tintly.parse("color(prophoto-rgb 0.5 0.3 0.8)");
+
+// HDR
+Tintly.parse("jzazbz(0.5, 0.02, -0.03)");
+Tintly.parse("jzczhz(0.5, 0.04, 300)");
+Tintly.parse("ictcp(0.5, 0.02, -0.03)");
+
+// Print
 Tintly.parse("cmyk(0%, 50%, 100%, 0%)");
 Tintly.parse("cmy(0%, 50%, 80%)");
+
+// Broadcast / scientific
 Tintly.parse("yiq(0.5, 0.2, -0.1)");
+Tintly.parse("ycbcr(0.5, -0.1, 0.2)");
+Tintly.parse("xyy(0.3, 0.3, 0.21)");
 ```
 
 Returns the parsed color object or `null` if the string is unrecognized.
@@ -79,11 +105,11 @@ Returns the parsed color object or `null` if the string is unrecognized.
 ```ts
 const hex = Tintly.parse("#3498db")!;
 
-const rgb  = Tintly.convert(hex, "RGB");
+const rgb = Tintly.convert(hex, "RGB");
 console.log(Tintly.toString(rgb!));
 // → "rgb(52 152 219)"
 
-const hsl  = Tintly.convert(hex, "HSL");
+const hsl = Tintly.convert(hex, "HSL");
 console.log(Tintly.toString(hsl!));
 // → "hsl(204.0123 69.7368% 53.1373%)"
 
@@ -91,9 +117,13 @@ const oklch = Tintly.convert(hex, "OKLCH");
 console.log(Tintly.toString(oklch!));
 // → "oklch(0.611066 0.131255 237.0451)"
 
-const cmyk = Tintly.convert(hex, "CMYK");
-console.log(Tintly.toString(cmyk!));
-// → "cmyk(76.2557% 30.5936% 0% 14.1176%)"
+const p3 = Tintly.convert(hex, "DisplayP3");
+console.log(Tintly.toString(p3!));
+// → "color(display-p3 0.267851 0.592566 0.848223)"
+
+const jz = Tintly.convert(hex, "JzCzhz");
+console.log(Tintly.toString(jz!));
+// → "jzczhz(0.009471 0.004823 237.1204)"
 ```
 
 ---
@@ -187,9 +217,40 @@ Tintly.clamp(color);
 
 ---
 
+## Operation Restrictions
+
+Some color spaces have inherent semantic limitations. Calling a restricted operation throws an `OperationNotSupported` error.
+
+```ts
+import { OperationNotSupported } from "@henryvilani/tintly";
+
+const cmyk = Tintly.parse("cmyk(0%, 50%, 100%, 0%)")!;
+
+// throws: OperationNotSupported — Operation "harmony" is not supported by the "CMYK" model.
+Tintly.harmony(cmyk, 3);
+```
+
+The built-in restrictions per model are:
+
+| Model     | Restricted operations                                           | Reason |
+|-----------|-----------------------------------------------------------------|--------|
+| `RGB`     | `alpha`                                                         | No alpha channel in the type |
+| `CMYK`    | `alpha`, `lighten`, `darken`, `harmony`, `complement`           | Subtractive print space — no hue axis, no alpha semantics |
+| `CMY`     | `alpha`, `lighten`, `darken`, `harmony`, `complement`           | Subtractive print space — same as CMYK |
+| `YIQ`     | `harmony`, `complement`                                         | Broadcast signal axes, not perceptual hue |
+| `YCbCr`   | `harmony`, `complement`                                         | Video encoding space, not perceptual hue |
+| `XYY`     | `lighten`, `darken`, `harmony`, `complement`                    | Scientific chromaticity; Y is absolute luminance |
+| `ICtCp`   | `lighten`, `darken`, `luminance`, `contrastRatio`, `readableOn` | HDR absolute scale (PQ), incompatible with WCAG |
+| `JzAzBz`  | `lighten`, `darken`, `luminance`, `contrastRatio`, `readableOn` | HDR absolute scale (PQ), incompatible with WCAG |
+| `JzCzhz`  | `lighten`, `darken`, `luminance`, `contrastRatio`, `readableOn` | HDR absolute scale (PQ), incompatible with WCAG |
+
+All other models support every operation without restriction.
+
+---
+
 ## Alpha Support
 
-All color models support an alpha channel:
+All color models carry an alpha channel:
 
 ```ts
 const color = Tintly.parse("rgba(255, 0, 0, 0.5)")!;
@@ -205,10 +266,14 @@ console.log(Tintly.toString(oklab));
 
 ```ts
 console.log(Tintly.types());
-// → ["RGB", "RGBA", "HEX", "LAB", "HSL", "LCH", "OKLAB", "OKLCH", "HWB", "CMYK", "CMY", "YIQ"]
+// → ["RGB", "RGBA", "HEX", "LAB", "HSL", "LCH", "OKLAB", "OKLCH", "HWB",
+//    "CMYK", "CMY", "YIQ", "HSB", "LinearSRGB", "DisplayP3", "Rec2020",
+//    "A98RGB", "ProPhotoRGB", "HSLuv", "LUV", "LCHuv", "Okhsl", "Okhsv",
+//    "JzAzBz", "JzCzhz", "ICtCp", "XYY", "YCbCr"]
 
-console.log(Tintly.has("OKLCH")); // → true
-console.log(Tintly.has("XYZ"));   // → false
+console.log(Tintly.has("OKLCH"));     // → true
+console.log(Tintly.has("DisplayP3")); // → true
+console.log(Tintly.has("XYZ"));       // → false
 ```
 
 ---
@@ -375,21 +440,63 @@ Clamps out-of-gamut XYZ values and round-trips the color through its model.
 
 ## Supported Color Spaces
 
-| Type    | Example string
-|---------|----------------------------------
-| `RGBA`  | `rgba(255, 128, 0, 1)`
-| `RGB`   | `rgb(255, 128, 0)`
-| `HEX`   | `#ff8000`, `#f80`, `#ff8000ff`
-| `HSL`   | `hsl(30, 100%, 50%)`, `hsla(...)`
-| `HSB`   | `hsb(30, 100%, 50%)`
-| `HWB`   | `hwb(30, 0%, 0%)`
-| `LAB`   | `lab(70, 20, -10)`
-| `LCH`   | `lch(70, 22, 333)`
-| `OKLAB` | `oklab(0.7, 0.1, -0.05)`
-| `OKLCH` | `oklch(0.7, 0.12, 330)`
-| `CMYK`  | `cmyk(0%, 50%, 100%, 0%)`
-| `CMY`   | `cmy(0%, 50%, 80%)`
-| `YIQ`   | `yiq(0.5, 0.2, -0.1)`
+### sRGB family
+
+| Type    | Example string                            |
+|---------|-------------------------------------------|
+| `RGBA`  | `rgba(255, 128, 0, 0.5)`                  |
+| `RGB`   | `rgb(255, 128, 0)`                        |
+| `HEX`   | `#ff8000`, `#f80`, `#ff8000ff`            |
+| `HSL`   | `hsl(30, 100%, 50%)`, `hsla(...)`         |
+| `HSB`   | `hsb(30, 100%, 50%)`                      |
+| `HWB`   | `hwb(30, 0%, 0%)`                         |
+
+### CIE / perceptual
+
+| Type      | Example string                            |
+|-----------|-------------------------------------------|
+| `LAB`     | `lab(70, 20, -10)`                        |
+| `LCH`     | `lch(70, 22, 333)`                        |
+| `OKLAB`   | `oklab(0.7, 0.1, -0.05)`                  |
+| `OKLCH`   | `oklch(0.7, 0.12, 330)`                   |
+| `LUV`     | `luv(70, 20, -10)`                        |
+| `LCHuv`   | `lchuv(70, 22, 333)`                      |
+| `HSLuv`   | `hsluv(333, 80%, 70%)`                    |
+| `Okhsl`   | `okhsl(333, 80%, 70%)`                    |
+| `Okhsv`   | `okhsv(333, 80%, 70%)`                    |
+
+### Wide-gamut RGB
+
+| Type          | Example string                            |
+|---------------|-------------------------------------------|
+| `LinearSRGB`  | `color(srgb-linear 0.5 0.3 0.8)`         |
+| `DisplayP3`   | `color(display-p3 0.5 0.3 0.8)`          |
+| `Rec2020`     | `color(rec2020 0.5 0.3 0.8)`             |
+| `A98RGB`      | `color(a98-rgb 0.5 0.3 0.8)`             |
+| `ProPhotoRGB` | `color(prophoto-rgb 0.5 0.3 0.8)`        |
+
+### HDR
+
+| Type      | Example string                            |
+|-----------|-------------------------------------------|
+| `JzAzBz`  | `jzazbz(0.5, 0.02, -0.03)`               |
+| `JzCzhz`  | `jzczhz(0.5, 0.04, 300)`                 |
+| `ICtCp`   | `ictcp(0.5, 0.02, -0.03)`                |
+
+### Print
+
+| Type   | Example string                            |
+|--------|-------------------------------------------|
+| `CMYK` | `cmyk(0%, 50%, 100%, 0%)`                |
+| `CMY`  | `cmy(0%, 50%, 80%)`                       |
+
+### Broadcast / scientific
+
+| Type     | Example string                            |
+|----------|-------------------------------------------|
+| `YIQ`    | `yiq(0.5, 0.2, -0.1)`                    |
+| `YCbCr`  | `ycbcr(0.5, -0.1, 0.2)`                  |
+| `XYY`    | `xyy(0.3, 0.3, 0.21)`                    |
 
 ---
 
