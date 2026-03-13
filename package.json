@@ -1,6 +1,6 @@
 {
 	"name": "@henryvilani/tintly",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "Comprehensive library of color models, with conversion and parsing capabilities.",
 	"license": "MIT",
 	"author": "Henry Vilani",
