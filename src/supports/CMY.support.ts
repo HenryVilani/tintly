@@ -51,6 +51,8 @@ const rgbToCmy = (r: number, g: number, b: number) => {
 export const CMYSupport: ColorModel<CMY> = {
 	type: "CMY",
 
+	unsupportedOperations: ["alpha", "lighten", "darken", "harmony", "complement"],
+
 	parse(input) {
 		const m = input.match(
 			/^cmy\(\s*([\d.]+)%?,\s*([\d.]+)%?,\s*([\d.]+)%?(?:,\s*([\d.]+))?\)$/i,

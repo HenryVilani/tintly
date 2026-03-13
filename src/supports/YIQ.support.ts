@@ -51,6 +51,8 @@ const rgbToYiq = (r: number, g: number, b: number) => {
 export const YIQSupport: ColorModel<YIQ> = {
 	type: "YIQ",
 
+	unsupportedOperations: ["harmony", "complement"],
+
 	parse(input) {
 		const m = input.match(
 			/^yiq\(\s*([\d.\-]+)\s*,\s*([\d.\-]+)\s*,\s*([\d.\-]+)(?:,\s*([\d.]+))?\)$/i,

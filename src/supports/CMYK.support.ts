@@ -68,6 +68,8 @@ const rgbToCmyk = (r: number, g: number, b: number) => {
 export const CMYKSupport: ColorModel<CMYK> = {
 	type: "CMYK",
 
+	unsupportedOperations: ["alpha", "lighten", "darken", "harmony", "complement"],
+
 	parse(input) {
 		const m = input.match(
 			/^cmyk\(\s*([\d.]+)%?,\s*([\d.]+)%?,\s*([\d.]+)%?,\s*([\d.]+)%?(?:,\s*([\d.]+))?\)$/i,

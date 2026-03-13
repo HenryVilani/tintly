@@ -34,6 +34,8 @@ const matMul = (m: number[][], v: number[]) =>
 export const RGBSupport: ColorModel<RGB> = {
 	type: "RGB",
 
+	unsupportedOperations: ["alpha"],
+
 	parse(input) {
 		const m = input.match(/^rgb\(\s*(\d+)\s+(\d+)\s+(\d+)\s*\)$/i);
 
