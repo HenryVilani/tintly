@@ -77,6 +77,12 @@ class ColorRegistry {
 		return [...this.models.keys()];
 	}
 
+	getUnsupportedOperations(type: string): Operation[] {
+		const model = this.getModel(type);
+		return model.unsupportedOperations ?? [];
+
+	}
+
 	toString<T extends BaseColor>(color: T): string {
 		const model = this.models.get(color.type);
 		if (!model) throw new ColorNotSupported(color.type);
